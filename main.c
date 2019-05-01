@@ -5,6 +5,7 @@
 BITMAPFILEHEADER *ReadBMFileHeader(FILE *fp, FILE *fp2);
 BITMAPINFOHEADER *ReadBMInfoHeader(FILE *fp, FILE *fp2);
 RGB rgbtri(FILE *fp);
+
 DWORD ReadLittleEndian4(FILE *fp,FILE *fp2);
 WORD ReadLittleEndian2(FILE *fp,FILE *fp2);
 
@@ -15,6 +16,7 @@ int main(int argc , char * argv[]){
     BITMAPINFOHEADER *bmpInfoHeader = NULL;
     RGB rgbtriple;
     HSV hsvtriple;
+    int pixels;
 
     if(argc != 3){
         puts("Usage: fileInputname fileOutputname");
@@ -51,7 +53,7 @@ int main(int argc , char * argv[]){
     printf("Y pixels per meter = %d\n", bmpInfoHeader->biYPelsPerMeter);
     printf("Color used         = %d colors\n", bmpInfoHeader->biClrUsed);
 
-    int pixels = (int) (bmpInfoHeader->biWidth * bmpInfoHeader->biHeight);
+    pixels = (int) (bmpInfoHeader->biWidth * bmpInfoHeader->biHeight);
 
     for(int i = 0; i < pixels; i++){
         rgbtriple = rgbtri(fp);
@@ -63,7 +65,9 @@ int main(int argc , char * argv[]){
         fwrite(&rgbtriple.blue, 1, 1, fp2);
         fwrite(&rgbtriple.green, 1, 1, fp2);
         fwrite(&rgbtriple.red, 1, 1, fp2);
-    }	
+    }
+    fclose(fp);
+    fclose(fp2);
     free(bmpFileHeader);
     free(bmpInfoHeader);
 
