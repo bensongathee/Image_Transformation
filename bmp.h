@@ -155,6 +155,11 @@ RGB hsv2rgb(HSV in)
 
     return rgb;
 }
+
+BITMAPFILEHEADER *ReadBMFileHeader(FILE *fp, FILE *fp2);
+BITMAPINFOHEADER *ReadBMInfoHeader(FILE *fp, FILE *fp2);
+RGB rgbtri(FILE *fp);
+
 double nfmod(double a, double b){
     return a - b * floor(a/b);
 }

@@ -2,10 +2,6 @@
 #include <string.h>
 #include "bmp.h"
 
-BITMAPFILEHEADER *ReadBMFileHeader(FILE *fp, FILE *fp2);
-BITMAPINFOHEADER *ReadBMInfoHeader(FILE *fp, FILE *fp2);
-RGB rgbtri(FILE *fp);
-
 DWORD ReadLittleEndian4(FILE *fp,FILE *fp2);
 WORD ReadLittleEndian2(FILE *fp,FILE *fp2);
 
@@ -16,7 +12,9 @@ int main(int argc , char * argv[]){
     BITMAPINFOHEADER *bmpInfoHeader = NULL;
     RGB rgbtriple;
     HSV hsvtriple;
-    int pixels;
+    int imagepixels;
+    int noofpaddingpixels;
+    int rowpos;
 
     if(argc != 3){
         puts("Usage: fileInputname fileOutputname");
@@ -36,7 +34,6 @@ int main(int argc , char * argv[]){
         puts("File not a Bitmap");
         exit(1);
     }
-
     bmpInfoHeader = ReadBMInfoHeader(fp, fp2);
 
     printf("File type          = %i\n", bmpFileHeader->bfType);
@@ -53,9 +50,19 @@ int main(int argc , char * argv[]){
     printf("Y pixels per meter = %d\n", bmpInfoHeader->biYPelsPerMeter);
     printf("Color used         = %d colors\n", bmpInfoHeader->biClrUsed);
 
-    pixels = (int) (bmpInfoHeader->biWidth * bmpInfoHeader->biHeight);
+    noofpaddingpixels = (int) (bmpInfoHeader->biWidth)%4;
 
-    for(int i = 0; i < pixels; i++){
+    imagepixels = (int) (bmpInfoHeader->biWidth * bmpInfoHeader->biHeight);
+    for(int i = 0; i < imagepixels; i++){
+        if(noofpaddingpixels > 0){
+            rowpos+=1;
+            if(rowpos == (bmpInfoHeader->biWidth)){
+                fseek(fp, (rowpos+(noofpaddingpixels*3)), SEEK_CUR);
+                fwrite(0, 1, (noofpaddingpixels*3), fp2);
+                rowpos = 0;
+                i+=noofpaddingpixels;
+            }
+        }
         rgbtriple = rgbtri(fp);
         hsvtriple = rgb2hsv(rgbtriple);
         if(hsvtriple.hue > 20 && hsvtriple.hue < 340){
@@ -66,6 +73,7 @@ int main(int argc , char * argv[]){
         fwrite(&rgbtriple.green, 1, 1, fp2);
         fwrite(&rgbtriple.red, 1, 1, fp2);
     }
+
     fclose(fp);
     fclose(fp2);
     free(bmpFileHeader);
@@ -73,7 +81,9 @@ int main(int argc , char * argv[]){
 
     return 0;
 }
-
+/*
+ * Read bitmap file header
+ */
 BITMAPFILEHEADER *ReadBMFileHeader(FILE *fp, FILE *fp2){
     BITMAPFILEHEADER *header;
 
@@ -105,7 +115,9 @@ BITMAPFILEHEADER *ReadBMFileHeader(FILE *fp, FILE *fp2){
     
     return header;
 }
-
+/*
+ * Read bitmap info header
+ */
 BITMAPINFOHEADER *ReadBMInfoHeader(FILE *fp, FILE *fp2){
     BITMAPINFOHEADER *infoheader;
 
@@ -148,7 +160,9 @@ BITMAPINFOHEADER *ReadBMInfoHeader(FILE *fp, FILE *fp2){
 
     return infoheader;
 }
-
+/*
+ * Read bitmap rgb triple
+ */
 RGB rgbtri(FILE *fp){
     RGB rgbtriple;
 
@@ -166,7 +180,9 @@ RGB rgbtri(FILE *fp){
 
     return rgbtriple;
 }
-
+/*
+ * Read 4 bytes in little endian
+ */
 DWORD ReadLittleEndian4(FILE *fp, FILE *fp2){
     BYTE buf[4];
     DWORD result = 0;  
@@ -179,7 +195,9 @@ DWORD ReadLittleEndian4(FILE *fp, FILE *fp2){
     }   
     return result;
 }
-
+/*
+ * Read 2 bytes in little endian
+ */
 WORD ReadLittleEndian2(FILE *fp, FILE *fp2){
     BYTE buf[2];
     WORD result = 0;
