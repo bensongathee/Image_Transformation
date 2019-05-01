@@ -1,10 +1,10 @@
 // BMP-related data types based on Microsoft's own wingdi.h
 // Used from HarvardX CS50 with modifications by Varun Khatri
-
+#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <math.h>
-
+double nfmod(double a, double b);
 // aliases for C/C++ primitive data types
 // https://msdn.microsoft.com/en-us/library/cc230309.aspx
 typedef uint8_t  BYTE;
@@ -64,20 +64,19 @@ HSV rgb2hsv(RGB in)
 {   
     HSV hsv;
     // your code here
-    double Rprime = ((double) in.red / (double) 255);
-    double Gprime = ((double) in.green / (double) 255);
-    double Bprime = ((double) in.blue / (double) 255);
+    double Rprime = ((double) in.red/255);
+    double Gprime = ((double) in.green/255);
+    double Bprime = ((double) in.blue/255);
     double rgbprimevals[] = {Bprime, Gprime, Rprime};
     double Cmax = -1000;
     double Cmin = 1000;
-    double delta = 1;
+    double delta;
     double hue;
     double saturation;
     double value;
     int Cmaxrgbprimeval;
-    int i;
 
-    for(i = 0; i < 3; i++){
+    for(int i = 0; i < 3; i++){
         if(rgbprimevals[i] > Cmax){
             Cmax = rgbprimevals[i];
             Cmaxrgbprimeval = i;
@@ -92,17 +91,17 @@ HSV rgb2hsv(RGB in)
     if(delta == 0){
         hue = 0;
     }else if(Cmaxrgbprimeval == 2){
-        hue = (60 * fmod((Gprime - Bprime)/delta, 6));
+        hue = 60 * nfmod((Gprime - Bprime)/delta, 6);
     }else if(Cmaxrgbprimeval == 1){
-        hue = (60 * ((Bprime - Rprime)/delta+2));
+        hue = 60 * ((Bprime - Rprime)/delta+2);
     }else if(Cmaxrgbprimeval == 0){
-        hue = (60 * ((Rprime - Gprime)/delta+4));
+        hue = 60 * ((Rprime - Gprime)/delta+4);
     }
 
     if(Cmax == 0){
         saturation = 0;
     }else if(Cmax != 0){
-        saturation = (delta/Cmax);
+        saturation = delta/Cmax;
     }
 
     hsv.hue = hue;
@@ -119,7 +118,7 @@ RGB hsv2rgb(HSV in)
     RGB rgb;
     // your code here
     double C = in.value * in.saturation;
-    double X = C * (1- abs(fmod(in.hue/60,2)-1));
+    double X = C * (1- fabs(nfmod(in.hue/60,2)-1));
     double m = in.value - C;
     double Rprime;
     double Gprime;
@@ -151,9 +150,12 @@ RGB hsv2rgb(HSV in)
         Bprime = X;
     }
 
-    rgb.red = (Rprime+m)*255;
-    rgb.blue = (Bprime+m)*255;
-    rgb.green = (Gprime+m)*255;
+    rgb.red = (BYTE)((Rprime+m)*255);
+    rgb.green = (BYTE)((Gprime+m)*255);
+    rgb.blue = (BYTE)((Bprime+m)*255);
 
     return rgb;
+}
+double nfmod(double a, double b){
+    return a - b * floor(a/b);
 }
