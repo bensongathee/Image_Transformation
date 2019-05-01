@@ -54,39 +54,39 @@ int main(int argc , char * argv[]){
 
     int pixels = (int) (bmpInfoHeader->biWidth * bmpInfoHeader->biHeight);
 
-    // for(int i = 0; i < pixels; i++){
-    //     rgbtriple = rgbtri(fp);
-    //     // printf("%i %i %i\n", rgbtriple.blue, rgbtriple.green,  rgbtriple.red);
+    for(int i = 0; i < pixels; i++){
+        rgbtriple = rgbtri(fp);
+        // printf("%i %i %i\n", rgbtriple.blue, rgbtriple.green,  rgbtriple.red);
 
-    //     // hsvtriple = rgb2hsv(rgbtriple);
-    //     // printf("%lf %lf %lf\n", hsvtriple.hue, hsvtriple.saturation,  hsvtriple.value);
+        // hsvtriple = rgb2hsv(rgbtriple);
+        // printf("%lf %lf %lf\n", hsvtriple.hue, hsvtriple.saturation,  hsvtriple.value);
 
-    //     // if(hsvtriple.hue > 20 && hsvtriple.hue < 340){
-    //     //     hsvtriple.saturation = 0;
-    //     // }
+        // if(hsvtriple.hue > 20 && hsvtriple.hue < 340){
+        //     hsvtriple.saturation = 0;
+        // }
 
-    //     // rgbtriple = hsv2rgb(hsvtriple);
-    //     fwrite(&rgbtriple.blue, 1, 1, fp2);
-    //     fwrite(&rgbtriple.green, 1, 1, fp2);
-    //     fwrite(&rgbtriple.red, 1, 1, fp2);
-    //     // printf("%i %i %i\n\n", rgbtriple.blue, rgbtriple.green,  rgbtriple.red);
-    // }
-
-    int i = 0;
-    fseek(fp, 0, SEEK_SET);
-    while(i < 1500){
-        fread(&buffer, 1, 1, fp);
-        printf("%i ",buffer);
-        i++;
+        // rgbtriple = hsv2rgb(hsvtriple);
+        fwrite(&rgbtriple.blue, 1, 1, fp2);
+        fwrite(&rgbtriple.green, 1, 1, fp2);
+        fwrite(&rgbtriple.red, 1, 1, fp2);
+        // printf("%i %i %i\n\n", rgbtriple.blue, rgbtriple.green,  rgbtriple.red);
     }
-    puts("\n");
-    i = 0;
-    fseek(fp2, 0, SEEK_SET);
-    while(i < 1500){
-        fread(&buffer, 1, 1, fp2);
-        printf("%i ",buffer);
-        i++;
-    }	
+
+    // int i = 0;
+    // fseek(fp, 0, SEEK_SET);
+    // while(i < 1500){
+    //     fread(&buffer, 1, 1, fp);
+    //     printf("%i ",buffer);
+    //     i++;
+    // }
+    // puts("\n");
+    // i = 0;
+    // fseek(fp2, 0, SEEK_SET);
+    // while(i < 1500){
+    //     fread(&buffer, 1, 1, fp2);
+    //     printf("%i ",buffer);
+    //     i++;
+    // }	
     free(bmpFileHeader);
     free(bmpInfoHeader);
 
