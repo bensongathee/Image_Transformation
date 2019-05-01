@@ -15,7 +15,6 @@ int main(int argc , char * argv[]){
     BITMAPINFOHEADER *bmpInfoHeader = NULL;
     RGB rgbtriple;
     HSV hsvtriple;
-    unsigned char buffer; //delete
 
     if(argc != 3){
         puts("Usage: fileInputname fileOutputname");
@@ -40,53 +39,31 @@ int main(int argc , char * argv[]){
 
     printf("File type          = %i\n", bmpFileHeader->bfType);
     printf("File size          = %d bytes\n", bmpFileHeader->bfSize);
-    printf("Data offset        = %ld bytes\n\n", bmpFileHeader->bfOffBits);
+    printf("Data offset        = %d bytes\n\n", bmpFileHeader->bfOffBits);
     printf("Info header size   = %d bytes\n", bmpInfoHeader->biSize);
-    printf("Width              = %ld pixels\n", bmpInfoHeader->biWidth);
-    printf("Height             = %ld pixels\n", bmpInfoHeader->biHeight);
+    printf("Width              = %d pixels\n", bmpInfoHeader->biWidth);
+    printf("Height             = %d pixels\n", bmpInfoHeader->biHeight);
     printf("Planes             = %d\n", bmpInfoHeader->biPlanes);
     printf("Bit count          = %d bits/pixel\n", bmpInfoHeader->biBitCount);
     printf("Compression        = %d\n", bmpInfoHeader->biCompression);
     printf("Size image         = %d bytes\n", bmpInfoHeader->biSizeImage);
-    printf("X pixels per meter = %ld\n", bmpInfoHeader->biXPelsPerMeter);
-    printf("Y pixels per meter = %ld\n", bmpInfoHeader->biYPelsPerMeter);
-    printf("Color used         = %ld colors\n", bmpInfoHeader->biClrUsed);
+    printf("X pixels per meter = %d\n", bmpInfoHeader->biXPelsPerMeter);
+    printf("Y pixels per meter = %d\n", bmpInfoHeader->biYPelsPerMeter);
+    printf("Color used         = %d colors\n", bmpInfoHeader->biClrUsed);
 
     int pixels = (int) (bmpInfoHeader->biWidth * bmpInfoHeader->biHeight);
 
     for(int i = 0; i < pixels; i++){
         rgbtriple = rgbtri(fp);
-        // printf("%i %i %i\n", rgbtriple.blue, rgbtriple.green,  rgbtriple.red);
-
-        // hsvtriple = rgb2hsv(rgbtriple);
-        // printf("%lf %lf %lf\n", hsvtriple.hue, hsvtriple.saturation,  hsvtriple.value);
-
-        // if(hsvtriple.hue > 20 && hsvtriple.hue < 340){
-        //     hsvtriple.saturation = 0;
-        // }
-
-        // rgbtriple = hsv2rgb(hsvtriple);
+        hsvtriple = rgb2hsv(rgbtriple);
+        if(hsvtriple.hue > 20 && hsvtriple.hue < 340){
+            hsvtriple.saturation = 0;
+        }
+        rgbtriple = hsv2rgb(hsvtriple);
         fwrite(&rgbtriple.blue, 1, 1, fp2);
         fwrite(&rgbtriple.green, 1, 1, fp2);
         fwrite(&rgbtriple.red, 1, 1, fp2);
-        // printf("%i %i %i\n\n", rgbtriple.blue, rgbtriple.green,  rgbtriple.red);
-    }
-
-    // int i = 0;
-    // fseek(fp, 0, SEEK_SET);
-    // while(i < 1500){
-    //     fread(&buffer, 1, 1, fp);
-    //     printf("%i ",buffer);
-    //     i++;
-    // }
-    // puts("\n");
-    // i = 0;
-    // fseek(fp2, 0, SEEK_SET);
-    // while(i < 1500){
-    //     fread(&buffer, 1, 1, fp2);
-    //     printf("%i ",buffer);
-    //     i++;
-    // }	
+    }	
     free(bmpFileHeader);
     free(bmpInfoHeader);
 
