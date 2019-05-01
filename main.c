@@ -59,8 +59,8 @@ int main(int argc , char * argv[]){
             if(rowpos == (bmpInfoHeader->biWidth)){
                 fseek(fp, (rowpos+(noofpaddingpixels*3)), SEEK_CUR);
                 fwrite(0, 1, (noofpaddingpixels*3), fp2);
-                rowpos = 0;
                 i+=noofpaddingpixels;
+                rowpos = 0;
             }
         }
         rgbtriple = rgbtri(fp);
