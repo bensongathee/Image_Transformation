@@ -14,7 +14,8 @@ int main(int argc , char * argv[]){
     HSV hsvtriple;
     int imagepixels;
     int noofpaddingpixels;
-    int rowpos;
+    int rowpos =0;
+    BYTE zero = 0;
 
     if(argc != 3){
         puts("Usage: fileInputname fileOutputname");
@@ -56,10 +57,9 @@ int main(int argc , char * argv[]){
     for(int i = 0; i < imagepixels; i++){
         if(noofpaddingpixels > 0){
             rowpos+=1;
-            if(rowpos == (bmpInfoHeader->biWidth)){
-                fseek(fp, (rowpos+(noofpaddingpixels*3)), SEEK_CUR);
-                fwrite(0, 1, (noofpaddingpixels*3), fp2);
-                i+=noofpaddingpixels;
+            if(rowpos == (int) (bmpInfoHeader->biWidth)){
+                fseek(fp, (ftell(fp)+(noofpaddingpixels*3)), SEEK_SET);
+                fwrite(&zero, 1, (noofpaddingpixels*3), fp2);
                 rowpos = 0;
             }
         }
